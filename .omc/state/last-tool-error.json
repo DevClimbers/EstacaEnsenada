@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"npx tsc --noEmit 2>&1\",\"timeout\":30000,\"description\":\"TypeScript check — find any type errors\"}",
+  "error": "Exit code 2\napp/(protected)/dashboard/page.tsx(48,17): error TS2322: Type '{ children: Element; asChild: true; className: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & VariantProps<(props?: (ConfigVariants<{ variant: { default: string; outline: string; secondary: string; ghost: string; destructive: string; link: string; }; size: { ...; }; }> & ClassProp) | undefined) => string>'.\n  Property 'asChild' does not exist on type 'IntrinsicAttributes & ButtonProps & VariantP...",
+  "timestamp": "2026-05-26T23:27:58.864Z",
+  "retry_count": 1
+}
