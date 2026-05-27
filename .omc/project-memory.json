@@ -157,6 +157,12 @@
       "type": "file"
     },
     {
+      "path": "components/layout/Sidebar.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1779919354241,
+      "type": "file"
+    },
+    {
       "path": "app/(protected)/agendas/[id]/page.tsx",
       "accessCount": 4,
       "lastAccessed": 1779839954193,
@@ -175,12 +181,6 @@
       "type": "file"
     },
     {
-      "path": "components/layout/Sidebar.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1779840346461,
-      "type": "file"
-    },
-    {
       "path": "app/layout.tsx",
       "accessCount": 3,
       "lastAccessed": 1779841226024,
@@ -190,6 +190,24 @@
       "path": "app/(protected)/entrevistas/page.tsx",
       "accessCount": 3,
       "lastAccessed": 1779841679975,
+      "type": "file"
+    },
+    {
+      "path": "components/calendario/EventPill.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1779919377011,
+      "type": "file"
+    },
+    {
+      "path": "components/calendario/MonthView.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1779919386738,
+      "type": "file"
+    },
+    {
+      "path": "components/calendario/WeekView.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1779919387584,
       "type": "file"
     },
     {
@@ -346,6 +364,24 @@
       "path": "app/(protected)/perfil/PerfilForm.tsx",
       "accessCount": 1,
       "lastAccessed": 1779918219398,
+      "type": "file"
+    },
+    {
+      "path": "app/api/calendario/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779919263059,
+      "type": "file"
+    },
+    {
+      "path": "components/calendario/CalendarioView.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779919341360,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/calendario/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779919345815,
       "type": "file"
     }
   ],

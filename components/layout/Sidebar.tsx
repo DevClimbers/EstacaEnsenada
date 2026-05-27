@@ -36,8 +36,7 @@ const navItems = [
     label: 'Calendario',
     href: '/calendario',
     icon: Calendar,
-    enabled: false,
-    badge: 'Próx.',
+    enabled: true,
   },
   {
     label: 'Compromisos',
