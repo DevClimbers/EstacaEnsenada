@@ -30,8 +30,7 @@ const navItems = [
     label: 'Kanban',
     href: '/kanban',
     icon: KanbanSquare,
-    enabled: false,
-    badge: 'Próx.',
+    enabled: true,
   },
   {
     label: 'Calendario',
@@ -50,8 +49,7 @@ const navItems = [
     label: 'Entrevistas',
     href: '/entrevistas',
     icon: Users,
-    enabled: false,
-    badge: 'Próx.',
+    enabled: true,
   },
   {
     label: 'Config',

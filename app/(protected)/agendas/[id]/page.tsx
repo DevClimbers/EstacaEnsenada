@@ -35,7 +35,6 @@ export default async function AgendaPage({ params }: Props) {
   const { data: perfiles } = await supabase
     .from('crm_perfiles')
     .select('id, nombre, rol')
-    .eq('activo', true)
     .order('nombre')
 
   return (

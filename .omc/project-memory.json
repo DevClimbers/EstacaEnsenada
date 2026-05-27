@@ -139,21 +139,33 @@
   },
   "hotPaths": [
     {
+      "path": "app/(protected)/agendas/[id]/page.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1779839954193,
+      "type": "file"
+    },
+    {
       "path": "components/agendas/AgendaEditor.tsx",
       "accessCount": 3,
       "lastAccessed": 1779839520712,
       "type": "file"
     },
     {
-      "path": "app/(protected)/agendas/[id]/page.tsx",
+      "path": "components/layout/Sidebar.tsx",
       "accessCount": 3,
-      "lastAccessed": 1779839560872,
+      "lastAccessed": 1779840346461,
       "type": "file"
     },
     {
       "path": "components/compromisos/CompromisoModal.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1779840382154,
+      "type": "file"
+    },
+    {
+      "path": "app/api/perfiles/route.ts",
       "accessCount": 2,
-      "lastAccessed": 1779839522029,
+      "lastAccessed": 1779839952854,
       "type": "file"
     },
     {
@@ -187,15 +199,111 @@
       "type": "file"
     },
     {
-      "path": "app/api/perfiles/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779839476400,
-      "type": "file"
-    },
-    {
       "path": "app/(protected)/agendas/[id]/AgendaEditorShell.tsx",
       "accessCount": 1,
       "lastAccessed": 1779839551357,
+      "type": "file"
+    },
+    {
+      "path": "lib/types.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779839900828,
+      "type": "file"
+    },
+    {
+      "path": "app/api/compromisos/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779840047440,
+      "type": "file"
+    },
+    {
+      "path": "app/api/compromisos/[id]/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779840047581,
+      "type": "file"
+    },
+    {
+      "path": "lib/kanban.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779840103905,
+      "type": "file"
+    },
+    {
+      "path": "app/api/tareas/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779840112006,
+      "type": "file"
+    },
+    {
+      "path": "app/api/tareas/[id]/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779840116130,
+      "type": "file"
+    },
+    {
+      "path": "app/api/entrevistas/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779840124233,
+      "type": "file"
+    },
+    {
+      "path": "app/api/entrevistas/[id]/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779840128439,
+      "type": "file"
+    },
+    {
+      "path": "app/api/unidades/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779840130479,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanCardView.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779840148103,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanCard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779840151711,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanColumn.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779840158357,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanBoard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779840195829,
+      "type": "file"
+    },
+    {
+      "path": "components/entrevistas/EntrevistaModal.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779840215425,
+      "type": "file"
+    },
+    {
+      "path": "components/tareas/TareaModal.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779840230237,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/kanban/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779840309047,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/entrevistas/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779840338839,
       "type": "file"
     }
   ],

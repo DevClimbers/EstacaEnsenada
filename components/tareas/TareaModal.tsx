@@ -18,23 +18,18 @@ import {
 } from '@/components/ui/select'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import type { Perfil, Compromiso, Prioridad } from '@/lib/types'
+import type { Tarea, Prioridad } from '@/lib/types'
 
-interface CompromisoModalProps {
+interface Perfil { id: string; nombre: string }
+
+interface TareaModalProps {
   open: boolean
   onClose: () => void
-  reunionId: string | null
-  perfiles: Pick<Perfil, 'id' | 'nombre'>[]
-  onCreated: (compromiso: Compromiso) => void
+  perfiles: Perfil[]
+  onCreated: (tarea: Tarea) => void
 }
 
-export function CompromisoModal({
-  open,
-  onClose,
-  reunionId,
-  perfiles,
-  onCreated,
-}: CompromisoModalProps) {
+export function TareaModal({ open, onClose, perfiles, onCreated }: TareaModalProps) {
   const [titulo, setTitulo] = useState('')
   const [descripcion, setDescripcion] = useState('')
   const [asignadoA, setAsignadoA] = useState('')
@@ -55,13 +50,12 @@ export function CompromisoModal({
     if (!titulo.trim()) return
     setLoading(true)
 
-    const res = await fetch('/api/compromisos', {
+    const res = await fetch('/api/tareas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         titulo: titulo.trim(),
         descripcion: descripcion.trim() || null,
-        reunion_id: reunionId,
         asignado_a: asignadoA || null,
         fecha_limite: fechaLimite || null,
         prioridad,
@@ -69,14 +63,14 @@ export function CompromisoModal({
     })
 
     if (!res.ok) {
-      toast.error('Error al crear el compromiso')
+      toast.error('Error al crear la tarea')
       setLoading(false)
       return
     }
 
-    const compromiso = await res.json()
-    toast.success('Compromiso creado')
-    onCreated(compromiso)
+    const tarea = await res.json()
+    toast.success('Tarea creada')
+    onCreated(tarea)
     reset()
     onClose()
     setLoading(false)
@@ -86,17 +80,17 @@ export function CompromisoModal({
     <Dialog open={open} onOpenChange={(o) => { if (!o) { reset(); onClose() } }}>
       <DialogContent showCloseButton className="max-w-md">
         <DialogTitle className="text-lg font-semibold text-gray-900">
-          Nuevo compromiso
+          Nueva tarea
         </DialogTitle>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label htmlFor="titulo-c">Título *</Label>
+            <Label htmlFor="titulo-t">Título *</Label>
             <Input
-              id="titulo-c"
+              id="titulo-t"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
-              placeholder="Descripción del compromiso"
+              placeholder="Descripción de la tarea"
               required
               disabled={loading}
               autoFocus
@@ -104,12 +98,12 @@ export function CompromisoModal({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="descripcion-c">
+            <Label htmlFor="descripcion-t">
               Descripción{' '}
               <span className="text-gray-400 text-xs">(opcional)</span>
             </Label>
             <Input
-              id="descripcion-c"
+              id="descripcion-t"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
               placeholder="Detalles adicionales"
@@ -135,9 +129,9 @@ export function CompromisoModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="fecha-limite">Fecha límite</Label>
+              <Label htmlFor="fecha-limite-t">Fecha límite</Label>
               <Input
-                id="fecha-limite"
+                id="fecha-limite-t"
                 type="date"
                 value={fechaLimite}
                 onChange={(e) => setFechaLimite(e.target.value)}
@@ -148,7 +142,7 @@ export function CompromisoModal({
               <Label>Prioridad</Label>
               <Select
                 value={prioridad}
-                onValueChange={(v) => setPrioridad(v as Prioridad)}
+                onValueChange={(v) => setPrioridad((v ?? 'media') as Prioridad)}
                 disabled={loading}
               >
                 <SelectTrigger>

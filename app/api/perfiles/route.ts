@@ -6,8 +6,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('crm_perfiles')
-    .select('id, nombre, rol, activo')
-    .eq('activo', true)
+    .select('id, nombre, rol')
     .order('nombre')
 
   if (error) {
