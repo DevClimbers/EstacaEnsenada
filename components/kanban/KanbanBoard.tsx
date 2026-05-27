@@ -233,7 +233,7 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
                 key={col.id}
                 id={col.id}
                 label={col.label}
-                emoji={col.emoji}
+                icon={col.icon}
                 items={filtered.filter((i) => i.columna === col.id)}
               />
             ))}

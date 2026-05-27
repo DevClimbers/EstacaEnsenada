@@ -182,7 +182,7 @@ export default function EntrevistasPage() {
                     )}
                     {fechaStr && (
                       <span className="text-xs text-[#1B2A5E] font-medium">
-                        📅 {fechaStr}
+                        {fechaStr}
                       </span>
                     )}
                   </div>

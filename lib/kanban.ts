@@ -25,14 +25,17 @@ export interface KanbanItem {
 export interface KanbanColumnaConfig {
   id: KanbanColumna
   label: string
-  emoji: string
+  /** Nombre del ícono Lucide a renderizar en la columna */
+  icon: 'Clock' | 'ArrowRight' | 'CheckCircle2' | 'XCircle'
+  /** Color del punto indicador */
+  dotColor: string
 }
 
 export const COLUMNAS: KanbanColumnaConfig[] = [
-  { id: 'pendiente',  label: 'Pendiente',   emoji: '📥' },
-  { id: 'progreso',   label: 'En progreso', emoji: '🔄' },
-  { id: 'completado', label: 'Completado',  emoji: '✅' },
-  { id: 'cancelado',  label: 'Cancelado',   emoji: '🚫' },
+  { id: 'pendiente',  label: 'Pendiente',   icon: 'Clock',         dotColor: 'bg-gray-400'  },
+  { id: 'progreso',   label: 'En progreso', icon: 'ArrowRight',    dotColor: 'bg-blue-500'  },
+  { id: 'completado', label: 'Completado',  icon: 'CheckCircle2',  dotColor: 'bg-green-500' },
+  { id: 'cancelado',  label: 'Cancelado',   icon: 'XCircle',       dotColor: 'bg-gray-300'  },
 ]
 
 /** Convierte el campo `estado` de la BD a la columna visual */

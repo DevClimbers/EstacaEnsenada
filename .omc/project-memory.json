@@ -139,9 +139,21 @@
   },
   "hotPaths": [
     {
+      "path": "app/(protected)/compromisos/page.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1779841678720,
+      "type": "file"
+    },
+    {
       "path": "app/(protected)/agendas/[id]/page.tsx",
       "accessCount": 4,
       "lastAccessed": 1779839954193,
+      "type": "file"
+    },
+    {
+      "path": "components/compromisos/CompromisoModal.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1779841681889,
       "type": "file"
     },
     {
@@ -157,15 +169,15 @@
       "type": "file"
     },
     {
-      "path": "components/compromisos/CompromisoModal.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1779840382154,
-      "type": "file"
-    },
-    {
       "path": "app/layout.tsx",
       "accessCount": 3,
       "lastAccessed": 1779841226024,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/entrevistas/page.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1779841679975,
       "type": "file"
     },
     {
@@ -181,9 +193,45 @@
       "type": "file"
     },
     {
+      "path": "lib/kanban.ts",
+      "accessCount": 2,
+      "lastAccessed": 1779841634110,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanColumn.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1779841645024,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanBoard.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1779841651583,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanCardView.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1779841656190,
+      "type": "file"
+    },
+    {
       "path": "app/(protected)/dashboard/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779839406046,
+      "accessCount": 2,
+      "lastAccessed": 1779841660707,
+      "type": "file"
+    },
+    {
+      "path": "lib/blocknote/template.ts",
+      "accessCount": 2,
+      "lastAccessed": 1779841667914,
+      "type": "file"
+    },
+    {
+      "path": "components/tareas/TareaModal.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1779841683422,
       "type": "file"
     },
     {
@@ -202,12 +250,6 @@
       "path": "app/(protected)/agendas/nueva/page.tsx",
       "accessCount": 1,
       "lastAccessed": 1779839428138,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/compromisos/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779839468394,
       "type": "file"
     },
     {
@@ -232,12 +274,6 @@
       "path": "app/api/compromisos/[id]/route.ts",
       "accessCount": 1,
       "lastAccessed": 1779840047581,
-      "type": "file"
-    },
-    {
-      "path": "lib/kanban.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779840103905,
       "type": "file"
     },
     {
@@ -271,27 +307,9 @@
       "type": "file"
     },
     {
-      "path": "components/kanban/KanbanCardView.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779840148103,
-      "type": "file"
-    },
-    {
       "path": "components/kanban/KanbanCard.tsx",
       "accessCount": 1,
       "lastAccessed": 1779840151711,
-      "type": "file"
-    },
-    {
-      "path": "components/kanban/KanbanColumn.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779840158357,
-      "type": "file"
-    },
-    {
-      "path": "components/kanban/KanbanBoard.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779840195829,
       "type": "file"
     },
     {
@@ -301,21 +319,15 @@
       "type": "file"
     },
     {
-      "path": "components/tareas/TareaModal.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779840230237,
-      "type": "file"
-    },
-    {
       "path": "app/(protected)/kanban/page.tsx",
       "accessCount": 1,
       "lastAccessed": 1779840309047,
       "type": "file"
     },
     {
-      "path": "app/(protected)/entrevistas/page.tsx",
+      "path": "components/agendas/CompromisosPanel.tsx",
       "accessCount": 1,
-      "lastAccessed": 1779840338839,
+      "lastAccessed": 1779841660509,
       "type": "file"
     }
   ],

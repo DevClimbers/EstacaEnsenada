@@ -135,7 +135,7 @@ export function CompromisosPanel({
                       vencido ? 'text-red-500 font-medium' : 'text-gray-400'
                     )}
                   >
-                    {vencido ? '⚠ ' : ''}
+                    {vencido ? '! ' : ''}
                     {format(new Date(c.fecha_limite + 'T00:00:00'), 'd MMM', {
                       locale: es,
                     })}

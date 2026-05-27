@@ -139,7 +139,7 @@ export default async function DashboardPage() {
                         </p>
                         {comp.fecha_limite && (
                           <p className={`text-xs mt-0.5 ${vencido ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
-                            {vencido ? '⚠ Vencido · ' : ''}
+                            {vencido ? 'Vencido · ' : ''}
                             {format(new Date(comp.fecha_limite + 'T00:00:00'), 'd MMM', { locale: es })}
                           </p>
                         )}

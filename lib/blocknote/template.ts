@@ -23,7 +23,7 @@ export function getPlantillaAgenda(fecha: Date): PartialBlockContent[] {
       content: [
         {
           type: 'text',
-          text: `📋 Reunión de Presidencia — ${fechaStr}`,
+          text: `Reunión de Presidencia — ${fechaStr}`,
           styles: {},
         },
       ],

@@ -155,9 +155,9 @@ export function CompromisoModal({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="alta">🔴 Alta</SelectItem>
-                  <SelectItem value="media">🟡 Media</SelectItem>
-                  <SelectItem value="baja">🟢 Baja</SelectItem>
+                  <SelectItem value="alta">Alta</SelectItem>
+                  <SelectItem value="media">Media</SelectItem>
+                  <SelectItem value="baja">Baja</SelectItem>
                 </SelectContent>
               </Select>
             </div>

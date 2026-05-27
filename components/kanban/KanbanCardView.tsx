@@ -87,7 +87,7 @@ export function KanbanCardView({ item, shadow = false }: KanbanCardViewProps) {
               vencido ? 'text-red-500 font-medium' : 'text-gray-400'
             )}
           >
-            {vencido ? '⚠ ' : ''}
+            {vencido ? '! ' : ''}
             {format(new Date(fechaStr), 'd MMM', { locale: es })}
           </span>
         )}

@@ -98,7 +98,7 @@ export default function CompromisosPage() {
           <h1 className="text-2xl font-bold text-gray-900">Compromisos</h1>
           {pendientes > 0 && (
             <p className="text-sm text-red-500 mt-0.5 font-medium">
-              ⚠ {pendientes} vencido{pendientes > 1 ? 's' : ''}
+              {pendientes} vencido{pendientes > 1 ? 's' : ''}
             </p>
           )}
         </div>
@@ -212,7 +212,7 @@ export default function CompromisosPage() {
                           vencido ? 'text-red-500' : 'text-gray-400'
                         )}
                       >
-                        {vencido ? '⚠ ' : ''}
+                        {vencido ? '! ' : ''}
                         {format(new Date(c.fecha_limite + 'T00:00:00'), 'd MMM yyyy', {
                           locale: es,
                         })}
