@@ -139,6 +139,12 @@
   },
   "hotPaths": [
     {
+      "path": "app/(protected)/kanban/page.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1779841995318,
+      "type": "file"
+    },
+    {
       "path": "app/(protected)/compromisos/page.tsx",
       "accessCount": 5,
       "lastAccessed": 1779841678720,
@@ -316,12 +322,6 @@
       "path": "components/entrevistas/EntrevistaModal.tsx",
       "accessCount": 1,
       "lastAccessed": 1779840215425,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/kanban/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779840309047,
       "type": "file"
     },
     {

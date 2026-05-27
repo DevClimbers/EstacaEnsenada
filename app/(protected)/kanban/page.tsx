@@ -41,6 +41,7 @@ export default async function KanbanPage() {
   ])
 
   const perfilesData = (perfiles ?? []) as { id: string; nombre: string }[]
+  const unidadesData = (unidades ?? []) as { id: string; nombre: string }[]
 
   const items: KanbanItem[] = [
     ...(compromisos ?? []).map((c) => {
@@ -70,7 +71,10 @@ export default async function KanbanPage() {
         asignado_a:     ent.asignado_a,
         asignadoNombre: perfilesData.find((p) => p.id === ent.asignado_a)?.nombre ?? null,
         fecha:          ent.fecha_agendada,
-        subtitulo:      TIPO_ENTREVISTA_LABELS[ent.tipo],
+        subtitulo:      [
+          TIPO_ENTREVISTA_LABELS[ent.tipo],
+          unidadesData.find((u) => u.id === ent.unidad_id)?.nombre,
+        ].filter(Boolean).join(' · '),
       }
     }),
     ...(tareas ?? []).map((t) => {
@@ -95,7 +99,7 @@ export default async function KanbanPage() {
       <KanbanBoard
         items={items}
         perfiles={perfilesData}
-        unidades={(unidades ?? []) as { id: string; nombre: string }[]}
+        unidades={unidadesData}
       />
     </div>
   )
