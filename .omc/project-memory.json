@@ -151,6 +151,12 @@
       "type": "file"
     },
     {
+      "path": "components/layout/Topbar.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1779918187128,
+      "type": "file"
+    },
+    {
       "path": "app/(protected)/agendas/[id]/page.tsx",
       "accessCount": 4,
       "lastAccessed": 1779839954193,
@@ -328,6 +334,18 @@
       "path": "components/agendas/CompromisosPanel.tsx",
       "accessCount": 1,
       "lastAccessed": 1779841660509,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/perfil/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779918193374,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/perfil/PerfilForm.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779918219398,
       "type": "file"
     }
   ],

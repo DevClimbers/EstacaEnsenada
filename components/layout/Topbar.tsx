@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, ChevronDown } from 'lucide-react'
+import { LogOut, ChevronDown, User } from 'lucide-react'
 import { ROL_LABELS } from '@/lib/types'
 import type { Perfil } from '@/lib/types'
 
@@ -65,6 +65,14 @@ export function Topbar({ perfil }: TopbarProps) {
               <p className="text-xs text-gray-500 font-normal">{ROL_LABELS[perfil.rol]}</p>
             </div>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => router.push('/perfil')}
+            className="cursor-pointer"
+          >
+            <User className="mr-2 h-4 w-4" />
+            Mi perfil
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={handleLogout}
