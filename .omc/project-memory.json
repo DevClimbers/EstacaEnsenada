@@ -139,6 +139,12 @@
   },
   "hotPaths": [
     {
+      "path": "components/layout/Topbar.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1779918765211,
+      "type": "file"
+    },
+    {
       "path": "app/(protected)/kanban/page.tsx",
       "accessCount": 6,
       "lastAccessed": 1779841995318,
@@ -148,12 +154,6 @@
       "path": "app/(protected)/compromisos/page.tsx",
       "accessCount": 5,
       "lastAccessed": 1779841678720,
-      "type": "file"
-    },
-    {
-      "path": "components/layout/Topbar.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1779918187128,
       "type": "file"
     },
     {

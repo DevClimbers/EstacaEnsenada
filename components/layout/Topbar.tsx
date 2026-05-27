@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -59,20 +60,21 @@ export function Topbar({ perfil }: TopbarProps) {
           <ChevronDown className="h-3 w-3 text-gray-400 hidden sm:block" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuLabel>
-            <div>
-              <p className="font-medium">{perfil.nombre}</p>
-              <p className="text-xs text-gray-500 font-normal">{ROL_LABELS[perfil.rol]}</p>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => router.push('/perfil')}
-            className="cursor-pointer"
-          >
-            <User className="mr-2 h-4 w-4" />
-            Mi perfil
-          </DropdownMenuItem>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>
+              <div>
+                <p className="font-medium">{perfil.nombre}</p>
+                <p className="text-xs text-gray-500 font-normal">{ROL_LABELS[perfil.rol]}</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => router.push('/perfil')}
+              className="cursor-pointer"
+            >
+              <User className="mr-2 h-4 w-4" />
+              Mi perfil
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={handleLogout}
