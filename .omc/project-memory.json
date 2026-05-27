@@ -163,9 +163,21 @@
       "type": "file"
     },
     {
+      "path": "app/layout.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1779841226024,
+      "type": "file"
+    },
+    {
       "path": "app/api/perfiles/route.ts",
       "accessCount": 2,
       "lastAccessed": 1779839952854,
+      "type": "file"
+    },
+    {
+      "path": "app/globals.css",
+      "accessCount": 2,
+      "lastAccessed": 1779841242043,
       "type": "file"
     },
     {
