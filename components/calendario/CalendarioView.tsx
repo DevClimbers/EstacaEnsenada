@@ -15,12 +15,13 @@ import {
   isToday,
 } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { ChevronLeft, ChevronRight, CalendarDays, LayoutGrid, X, ExternalLink } from 'lucide-react'
+import { ChevronLeft, ChevronRight, CalendarDays, LayoutGrid, X, ExternalLink, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { MonthView } from './MonthView'
 import { WeekView } from './WeekView'
 import { EventPill } from './EventPill'
+import { NuevaReunionModal } from './NuevaReunionModal'
 import { useRouter } from 'next/navigation'
 import type { CalendarEvent } from '@/app/api/calendario/route'
 
@@ -48,6 +49,8 @@ export function CalendarioView() {
   const [loading, setLoading] = useState(true)
   const [selectedDay, setSelectedDay] = useState<Date | null>(null)
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   // Compute visible date range based on view
   const getRange = useCallback(() => {
@@ -75,7 +78,7 @@ export function CalendarioView() {
       .then((r) => r.json())
       .then((data: CalendarEvent[]) => { setEvents(data); setLoading(false) })
       .catch(() => setLoading(false))
-  }, [getRange])
+  }, [getRange, refreshKey])
 
   function navigate(dir: 'prev' | 'next') {
     if (view === 'month') {
@@ -125,6 +128,14 @@ export function CalendarioView() {
         {/* Toolbar */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 bg-white flex-shrink-0">
           <div className="flex items-center gap-3">
+            <Button
+              size="sm"
+              className="bg-[#1B2A5E] hover:bg-[#243578] text-white"
+              onClick={() => setModalOpen(true)}
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              Nueva reunión
+            </Button>
             <Button variant="outline" size="sm" onClick={goToday}>
               Hoy
             </Button>
@@ -232,12 +243,23 @@ export function CalendarioView() {
                 <p className="text-sm font-semibold text-gray-900">Detalle</p>
               )}
             </div>
-            <button
-              onClick={() => { setSelectedDay(null); setSelectedEvent(null) }}
-              className="text-gray-400 hover:text-gray-600 rounded-md p-1 hover:bg-gray-100 transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              {selectedDay && !selectedEvent && (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  title="Nueva reunión en este día"
+                  className="text-gray-400 hover:text-[#1B2A5E] rounded-md p-1 hover:bg-gray-100 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              )}
+              <button
+                onClick={() => { setSelectedDay(null); setSelectedEvent(null) }}
+                className="text-gray-400 hover:text-gray-600 rounded-md p-1 hover:bg-gray-100 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           {/* Panel body */}
@@ -295,6 +317,13 @@ export function CalendarioView() {
           </div>
         </div>
       )}
+
+      <NuevaReunionModal
+        open={modalOpen}
+        defaultFecha={selectedDay ? format(selectedDay, 'yyyy-MM-dd') : undefined}
+        onClose={() => setModalOpen(false)}
+        onCreated={() => setRefreshKey((k) => k + 1)}
+      />
     </div>
   )
 }

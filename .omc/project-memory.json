@@ -139,6 +139,12 @@
   },
   "hotPaths": [
     {
+      "path": "components/calendario/CalendarioView.tsx",
+      "accessCount": 12,
+      "lastAccessed": 1779920502714,
+      "type": "file"
+    },
+    {
       "path": "components/layout/Topbar.tsx",
       "accessCount": 7,
       "lastAccessed": 1779918765211,
@@ -265,6 +271,12 @@
       "type": "file"
     },
     {
+      "path": "components/agendas/NuevaAgendaForm.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1779920430979,
+      "type": "file"
+    },
+    {
       "path": "app/(protected)/layout.tsx",
       "accessCount": 1,
       "lastAccessed": 1779839406394,
@@ -373,15 +385,15 @@
       "type": "file"
     },
     {
-      "path": "components/calendario/CalendarioView.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779919341360,
-      "type": "file"
-    },
-    {
       "path": "app/(protected)/calendario/page.tsx",
       "accessCount": 1,
       "lastAccessed": 1779919345815,
+      "type": "file"
+    },
+    {
+      "path": "components/calendario/NuevaReunionModal.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779920447435,
       "type": "file"
     }
   ],
