@@ -8,14 +8,13 @@ import {
   DragOverlay,
   pointerWithin,
   rectIntersection,
-  getFirstCollision,
-  type UniqueIdentifier,
 } from '@dnd-kit/core'
 import { Plus, Filter } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { KanbanColumn } from './KanbanColumn'
 import { KanbanCardView } from './KanbanCardView'
+import { KanbanCardDetail } from './KanbanCardDetail'
 import {
   COLUMNAS,
   estadoToColumna,
@@ -55,6 +54,9 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
   const [modalEntrevista, setModalEntrevista] = useState(false)
   const [modalTarea, setModalTarea] = useState(false)
   const [modalCompromiso, setModalCompromiso] = useState(false)
+
+  // Detail modal
+  const [detailItem, setDetailItem] = useState<KanbanItem | null>(null)
 
   const filtered = items.filter((i) => {
     if (filtroTipo !== 'todos' && i.tipo !== filtroTipo) return false
@@ -103,6 +105,23 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
     })
   }
 
+  function handleOpenDetail(item: KanbanItem) {
+    setDetailItem(item)
+  }
+
+  function handleDeletedItem(id: string) {
+    setItems((prev) => prev.filter((i) => i.id !== id))
+    setDetailItem(null)
+  }
+
+  function handleDescripcionSaved(id: string, descripcion: string | null) {
+    setItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, descripcion } : i))
+    )
+    // Keep detail item in sync
+    setDetailItem((prev) => (prev?.id === id ? { ...prev, descripcion } : prev))
+  }
+
   // Helpers para convertir respuestas de API → KanbanItem
   function entrevistaToItem(e: Entrevista): KanbanItem {
     return {
@@ -116,6 +135,7 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
       asignadoNombre: perfiles.find((p) => p.id === e.asignado_a)?.nombre ?? null,
       fecha: e.fecha_agendada,
       subtitulo: TIPO_ENTREVISTA_LABELS[e.tipo],
+      descripcion: e.notas,
     }
   }
 
@@ -131,6 +151,7 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
       asignado_a: t.asignado_a,
       asignadoNombre: perfiles.find((p) => p.id === t.asignado_a)?.nombre ?? null,
       fecha: t.fecha_limite,
+      descripcion: t.descripcion,
     }
   }
 
@@ -146,6 +167,7 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
       asignado_a: c.asignado_a,
       asignadoNombre: perfiles.find((p) => p.id === c.asignado_a)?.nombre ?? null,
       fecha: c.fecha_limite,
+      descripcion: c.descripcion,
     }
   }
 
@@ -163,10 +185,10 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
             {/* Filtro tipo */}
             <div className="flex gap-1.5 flex-wrap">
               {([
-                { v: 'todos', l: 'Todos' },
-                { v: 'compromiso', l: 'Compromisos' },
-                { v: 'tarea', l: 'Tareas' },
-                { v: 'entrevista', l: 'Entrevistas' },
+                { v: 'todos',      l: 'Todos'        },
+                { v: 'compromiso', l: 'Compromisos'   },
+                { v: 'tarea',      l: 'Tareas'        },
+                { v: 'entrevista', l: 'Entrevistas'   },
               ] as const).map(({ v, l }) => (
                 <button
                   key={v}
@@ -191,9 +213,7 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
               >
                 <option value="todos">Todos</option>
                 {perfiles.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.nombre}
-                  </option>
+                  <option key={p.id} value={p.id}>{p.nombre}</option>
                 ))}
               </select>
             )}
@@ -235,18 +255,19 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
                 label={col.label}
                 icon={col.icon}
                 items={filtered.filter((i) => i.columna === col.id)}
+                onOpen={handleOpenDetail}
               />
             ))}
           </div>
         </div>
 
-        {/* DragOverlay — render visual sin hooks de draggable */}
+        {/* DragOverlay */}
         <DragOverlay>
           {activeItem ? <KanbanCardView item={activeItem} shadow /> : null}
         </DragOverlay>
       </div>
 
-      {/* Modals */}
+      {/* Modals de creación */}
       <EntrevistaModal
         open={modalEntrevista}
         onClose={() => setModalEntrevista(false)}
@@ -266,6 +287,14 @@ export function KanbanBoard({ items: initialItems, perfiles, unidades }: KanbanB
         reunionId={null}
         perfiles={perfiles}
         onCreated={(c) => setItems((prev) => [compromisoToItem(c), ...prev])}
+      />
+
+      {/* Modal de detalle */}
+      <KanbanCardDetail
+        item={detailItem}
+        onClose={() => setDetailItem(null)}
+        onDeleted={handleDeletedItem}
+        onDescripcionSaved={handleDescripcionSaved}
       />
     </DndContext>
   )

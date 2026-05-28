@@ -1,7 +1,28 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
-// PATCH /api/compromisos/[id] — actualizar estado, prioridad, etc.
+// GET /api/compromisos/[id]
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const supabase = await createClient()
+  const { id } = await params
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+
+  const { data, error } = await supabase
+    .from('crm_compromisos')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+  return NextResponse.json(data)
+}
+
+// PATCH /api/compromisos/[id] — actualizar estado, prioridad, descripcion, etc.
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -38,4 +59,24 @@ export async function PATCH(
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json(data)
+}
+
+// DELETE /api/compromisos/[id] — archivar (soft delete)
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const supabase = await createClient()
+  const { id } = await params
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+
+  const { error } = await supabase
+    .from('crm_compromisos')
+    .update({ archivado: true })
+    .eq('id', id)
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ ok: true })
 }

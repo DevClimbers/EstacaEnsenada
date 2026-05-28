@@ -57,6 +57,7 @@ export default async function KanbanPage() {
         asignado_a:     comp.asignado_a,
         asignadoNombre: perfilesData.find((p) => p.id === comp.asignado_a)?.nombre ?? null,
         fecha:          comp.fecha_limite,
+        descripcion:    comp.descripcion,
       }
     }),
     ...(entrevistas ?? []).map((e) => {
@@ -75,6 +76,7 @@ export default async function KanbanPage() {
           TIPO_ENTREVISTA_LABELS[ent.tipo],
           unidadesData.find((u) => u.id === ent.unidad_id)?.nombre,
         ].filter(Boolean).join(' · '),
+        descripcion:    ent.notas,
       }
     }),
     ...(tareas ?? []).map((t) => {
@@ -90,6 +92,7 @@ export default async function KanbanPage() {
         asignado_a:     tar.asignado_a,
         asignadoNombre: perfilesData.find((p) => p.id === tar.asignado_a)?.nombre ?? null,
         fecha:          tar.fecha_limite,
+        descripcion:    tar.descripcion,
       }
     }),
   ]

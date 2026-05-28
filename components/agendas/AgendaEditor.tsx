@@ -3,10 +3,11 @@
 import '@blocknote/mantine/style.css'
 
 import { useCallback, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useCreateBlockNote } from '@blocknote/react'
 import { BlockNoteView } from '@blocknote/mantine'
 import type { PartialBlock } from '@blocknote/core'
-import { Plus, Save, AlertTriangle } from 'lucide-react'
+import { Plus, Save, AlertTriangle, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { CompromisosPanel } from './CompromisosPanel'
@@ -28,11 +29,33 @@ const estadoColor: Record<EstadoReunion, string> = {
 }
 
 export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorProps) {
+  const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<Date | null>(null)
   const [conflict, setConflict] = useState<{ updated_at_db: string } | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [localCompromisos, setLocalCompromisos] = useState<Compromiso[]>(compromisos)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  async function handleDeleteAgenda() {
+    if (!confirmDelete) { setConfirmDelete(true); return }
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/reuniones/${reunion.id}`, { method: 'DELETE' })
+      if (res.ok) {
+        toast.success('Agenda eliminada')
+        router.push('/agendas')
+        router.refresh()
+      } else {
+        toast.error('Error al eliminar la agenda')
+        setDeleting(false)
+      }
+    } catch {
+      toast.error('Error de red')
+      setDeleting(false)
+    }
+  }
 
   const localUpdatedAt = useRef<string>(reunion.updated_at)
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -136,6 +159,35 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
                 <Save className="h-3 w-3 animate-pulse" /> Guardando…
               </span>
             )}
+
+            {/* Eliminar agenda */}
+            {confirmDelete ? (
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-red-600">¿Eliminar agenda?</span>
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  className="text-xs px-2 py-1 rounded border border-gray-200 text-gray-600 hover:bg-gray-100"
+                >
+                  No
+                </button>
+                <button
+                  onClick={handleDeleteAgenda}
+                  disabled={deleting}
+                  className="text-xs px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white font-medium disabled:opacity-50"
+                >
+                  {deleting ? '…' : 'Sí, eliminar'}
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleDeleteAgenda}
+                title="Eliminar agenda"
+                className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+
             <button
               onClick={() => setModalOpen(true)}
               className="flex items-center gap-1.5 text-sm bg-[#1B2A5E] text-white px-3 py-1.5 rounded-lg hover:bg-[#243578] transition-colors font-medium"

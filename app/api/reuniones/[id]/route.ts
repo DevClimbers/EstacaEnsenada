@@ -53,6 +53,26 @@ export async function PATCH(
   return NextResponse.json(data)
 }
 
+// DELETE /api/reuniones/[id] — archivar (soft delete)
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const supabase = await createClient()
+  const { id } = await params
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+
+  const { error } = await supabase
+    .from('crm_reuniones')
+    .update({ archivado: true })
+    .eq('id', id)
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ ok: true })
+}
+
 // GET /api/reuniones/[id] — obtener reunión
 export async function GET(
   _request: Request,

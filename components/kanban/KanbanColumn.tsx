@@ -20,9 +20,10 @@ interface KanbanColumnProps {
   label: string
   icon: KanbanColumnaConfig['icon']
   items: KanbanItem[]
+  onOpen?: (item: KanbanItem) => void
 }
 
-export function KanbanColumn({ id, label, icon, items }: KanbanColumnProps) {
+export function KanbanColumn({ id, label, icon, items, onOpen }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id })
   const Icon = ICONS[icon]
 
@@ -46,7 +47,7 @@ export function KanbanColumn({ id, label, icon, items }: KanbanColumnProps) {
         )}
       >
         {items.map((item) => (
-          <KanbanCard key={item.id} item={item} />
+          <KanbanCard key={item.id} item={item} onOpen={onOpen} />
         ))}
 
         {items.length === 0 && (

@@ -8,9 +8,10 @@ import type { KanbanItem } from '@/lib/kanban'
 
 interface KanbanCardProps {
   item: KanbanItem
+  onOpen?: (item: KanbanItem) => void
 }
 
-export function KanbanCard({ item }: KanbanCardProps) {
+export function KanbanCard({ item, onOpen }: KanbanCardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
     data: { tipo: item.tipo, columna: item.columna, item },
@@ -31,7 +32,10 @@ export function KanbanCard({ item }: KanbanCardProps) {
         isDragging && 'opacity-30'
       )}
     >
-      <KanbanCardView item={item} />
+      <KanbanCardView
+        item={item}
+        onOpen={onOpen ? () => onOpen(item) : undefined}
+      />
     </div>
   )
 }

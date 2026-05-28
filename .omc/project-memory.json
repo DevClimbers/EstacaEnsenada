@@ -140,6 +140,12 @@
   },
   "hotPaths": [
     {
+      "path": "components/agendas/AgendaEditor.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1780000018491,
+      "type": "file"
+    },
+    {
       "path": "app/layout.tsx",
       "accessCount": 2,
       "lastAccessed": 1779935680386,
@@ -176,6 +182,60 @@
       "type": "file"
     },
     {
+      "path": "app/api/reuniones/[id]/route.ts",
+      "accessCount": 2,
+      "lastAccessed": 1779999958718,
+      "type": "file"
+    },
+    {
+      "path": "app/api/compromisos/[id]/route.ts",
+      "accessCount": 2,
+      "lastAccessed": 1779999970581,
+      "type": "file"
+    },
+    {
+      "path": "components/agendas/AgendaCard.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1779999989867,
+      "type": "file"
+    },
+    {
+      "path": "lib/kanban.ts",
+      "accessCount": 2,
+      "lastAccessed": 1780000025585,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/kanban/page.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1780000038175,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanCardView.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1780000095286,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanCard.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1780000101431,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanColumn.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1780000114119,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanBoard.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1780000155563,
+      "type": "file"
+    },
+    {
       "path": "lib/types.ts",
       "accessCount": 1,
       "lastAccessed": 1779935393969,
@@ -200,12 +260,6 @@
       "type": "file"
     },
     {
-      "path": "components/agendas/AgendaEditor.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779999359402,
-      "type": "file"
-    },
-    {
       "path": "components/agendas/NuevaAgendaForm.tsx",
       "accessCount": 1,
       "lastAccessed": 1779999359696,
@@ -215,6 +269,30 @@
       "path": "app/api/reuniones/route.ts",
       "accessCount": 1,
       "lastAccessed": 1779999373195,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/agendas/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779999688853,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/agendas/[id]/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779999689614,
+      "type": "file"
+    },
+    {
+      "path": "components/compromisos/CompromisoModal.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779999738612,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanCardDetail.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1780000076259,
       "type": "file"
     }
   ],

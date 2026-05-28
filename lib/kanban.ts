@@ -20,6 +20,8 @@ export interface KanbanItem {
   fecha?: string | null
   /** subtítulo secundario: tipo entrevista, unidad, reunión de origen */
   subtitulo?: string | null
+  /** descripcion (compromisos/tareas) o notas (entrevistas) */
+  descripcion?: string | null
 }
 
 export interface KanbanColumnaConfig {
