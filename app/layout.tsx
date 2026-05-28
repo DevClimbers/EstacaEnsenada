@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${jakarta.variable} h-full antialiased`}>
-      <body className="min-h-full bg-gray-50 font-sans">
+      <body className="min-h-full bg-[#FAF8F2] font-sans">
         {children}
         <Toaster richColors position="top-right" />
       </body>

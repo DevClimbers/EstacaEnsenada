@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1779839392203,
+  "lastScanned": 1779935387142,
   "projectRoot": "/Users/josemzamudio/code/presidencia-estaca",
   "techStack": {
     "languages": [
@@ -75,7 +75,7 @@
       "path": "app",
       "purpose": "Application code",
       "fileCount": 4,
-      "lastAccessed": 1779839392188,
+      "lastAccessed": 1779935387128,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -87,15 +87,16 @@
       "path": "components",
       "purpose": "UI components",
       "fileCount": 0,
-      "lastAccessed": 1779839392189,
+      "lastAccessed": 1779935387131,
       "keyFiles": []
     },
     "lib": {
       "path": "lib",
       "purpose": "Library code",
-      "fileCount": 2,
-      "lastAccessed": 1779839392189,
+      "fileCount": 3,
+      "lastAccessed": 1779935387131,
       "keyFiles": [
+        "kanban.ts",
         "types.ts",
         "utils.ts"
       ]
@@ -104,7 +105,7 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 5,
-      "lastAccessed": 1779839392189,
+      "lastAccessed": 1779935387132,
       "keyFiles": [
         "file.svg",
         "globe.svg",
@@ -117,21 +118,21 @@
       "path": "supabase",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1779839392189,
+      "lastAccessed": 1779935387132,
       "keyFiles": []
     },
     "app/api": {
       "path": "app/api",
       "purpose": "API routes",
       "fileCount": 0,
-      "lastAccessed": 1779839392189,
+      "lastAccessed": 1779935387132,
       "keyFiles": []
     },
     "supabase/migrations": {
       "path": "supabase/migrations",
       "purpose": "Database migrations",
       "fileCount": 1,
-      "lastAccessed": 1779839392190,
+      "lastAccessed": 1779935387133,
       "keyFiles": [
         "001_crm_schema.sql"
       ]
@@ -139,261 +140,51 @@
   },
   "hotPaths": [
     {
-      "path": "components/calendario/CalendarioView.tsx",
-      "accessCount": 12,
-      "lastAccessed": 1779920502714,
-      "type": "file"
-    },
-    {
-      "path": "components/layout/Topbar.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1779918765211,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/kanban/page.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1779841995318,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/compromisos/page.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1779841678720,
+      "path": "app/layout.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1779935680386,
       "type": "file"
     },
     {
       "path": "components/layout/Sidebar.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1779919354241,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/agendas/[id]/page.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1779839954193,
-      "type": "file"
-    },
-    {
-      "path": "components/compromisos/CompromisoModal.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1779841681889,
-      "type": "file"
-    },
-    {
-      "path": "components/agendas/AgendaEditor.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1779839520712,
-      "type": "file"
-    },
-    {
-      "path": "app/layout.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1779841226024,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/entrevistas/page.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1779841679975,
-      "type": "file"
-    },
-    {
-      "path": "components/calendario/EventPill.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1779919377011,
-      "type": "file"
-    },
-    {
-      "path": "components/calendario/MonthView.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1779919386738,
-      "type": "file"
-    },
-    {
-      "path": "components/calendario/WeekView.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1779919387584,
-      "type": "file"
-    },
-    {
-      "path": "app/api/perfiles/route.ts",
       "accessCount": 2,
-      "lastAccessed": 1779839952854,
+      "lastAccessed": 1779935710755,
       "type": "file"
     },
     {
-      "path": "app/globals.css",
+      "path": "components/layout/Topbar.tsx",
       "accessCount": 2,
-      "lastAccessed": 1779841242043,
+      "lastAccessed": 1779935733113,
       "type": "file"
     },
     {
-      "path": "lib/kanban.ts",
+      "path": "app/(protected)/layout.tsx",
       "accessCount": 2,
-      "lastAccessed": 1779841634110,
-      "type": "file"
-    },
-    {
-      "path": "components/kanban/KanbanColumn.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1779841645024,
-      "type": "file"
-    },
-    {
-      "path": "components/kanban/KanbanBoard.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1779841651583,
-      "type": "file"
-    },
-    {
-      "path": "components/kanban/KanbanCardView.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1779841656190,
+      "lastAccessed": 1779935747836,
       "type": "file"
     },
     {
       "path": "app/(protected)/dashboard/page.tsx",
       "accessCount": 2,
-      "lastAccessed": 1779841660707,
-      "type": "file"
-    },
-    {
-      "path": "lib/blocknote/template.ts",
-      "accessCount": 2,
-      "lastAccessed": 1779841667914,
-      "type": "file"
-    },
-    {
-      "path": "components/tareas/TareaModal.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1779841683422,
-      "type": "file"
-    },
-    {
-      "path": "components/agendas/NuevaAgendaForm.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1779920430979,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/layout.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779839406394,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/agendas/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779839424273,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/agendas/nueva/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779839428138,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/agendas/[id]/AgendaEditorShell.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779839551357,
+      "lastAccessed": 1779935802351,
       "type": "file"
     },
     {
       "path": "lib/types.ts",
       "accessCount": 1,
-      "lastAccessed": 1779839900828,
+      "lastAccessed": 1779935393969,
       "type": "file"
     },
     {
-      "path": "app/api/compromisos/route.ts",
+      "path": "components/dashboard/KpiCard.tsx",
       "accessCount": 1,
-      "lastAccessed": 1779840047440,
+      "lastAccessed": 1779935439930,
       "type": "file"
     },
     {
-      "path": "app/api/compromisos/[id]/route.ts",
+      "path": "components/dashboard/Donut.tsx",
       "accessCount": 1,
-      "lastAccessed": 1779840047581,
-      "type": "file"
-    },
-    {
-      "path": "app/api/tareas/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779840112006,
-      "type": "file"
-    },
-    {
-      "path": "app/api/tareas/[id]/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779840116130,
-      "type": "file"
-    },
-    {
-      "path": "app/api/entrevistas/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779840124233,
-      "type": "file"
-    },
-    {
-      "path": "app/api/entrevistas/[id]/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779840128439,
-      "type": "file"
-    },
-    {
-      "path": "app/api/unidades/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779840130479,
-      "type": "file"
-    },
-    {
-      "path": "components/kanban/KanbanCard.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779840151711,
-      "type": "file"
-    },
-    {
-      "path": "components/entrevistas/EntrevistaModal.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779840215425,
-      "type": "file"
-    },
-    {
-      "path": "components/agendas/CompromisosPanel.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779841660509,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/perfil/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779918193374,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/perfil/PerfilForm.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779918219398,
-      "type": "file"
-    },
-    {
-      "path": "app/api/calendario/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779919263059,
-      "type": "file"
-    },
-    {
-      "path": "app/(protected)/calendario/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779919345815,
-      "type": "file"
-    },
-    {
-      "path": "components/calendario/NuevaReunionModal.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779920447435,
+      "lastAccessed": 1779935440130,
       "type": "file"
     }
   ],

@@ -1,164 +1,298 @@
 import { createClient } from '@/lib/supabase/server'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
-import { CalendarDays, CheckSquare, Plus } from 'lucide-react'
-import { buttonVariants } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
-import type { Reunion, Compromiso, EstadoCompromiso } from '@/lib/types'
+import { format, addDays } from 'date-fns'
+import type { Entrevista, Compromiso, Perfil, Reunion } from '@/lib/types'
+import { TIPO_ENTREVISTA_LABELS } from '@/lib/types'
+import { KpiCard } from '@/components/dashboard/KpiCard'
+import { FocoSemana } from '@/components/dashboard/FocoSemana'
+import { ProximaReunionCard } from '@/components/dashboard/ProximaReunionCard'
+import { CargaCard } from '@/components/dashboard/CargaCard'
+import { UnidadesCard } from '@/components/dashboard/UnidadesCard'
+import { ActividadCard } from '@/components/dashboard/ActividadCard'
+import { Donut } from '@/components/dashboard/Donut'
 
-const estadoBadgeColor: Record<EstadoCompromiso, string> = {
-  pendiente: 'bg-yellow-100 text-yellow-800',
-  en_progreso: 'bg-blue-100 text-blue-800',
-  completado: 'bg-green-100 text-green-800',
-  cancelado: 'bg-gray-100 text-gray-500',
+function greeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return 'Buenos días'
+  if (h < 18) return 'Buenas tardes'
+  return 'Buenas noches'
 }
+
+const TONE_PALETTE = ['#1B2A5E', '#2F4D8C', '#C9A84C', '#3D6FA8']
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const hoy = new Date().toISOString().split('T')[0]
+  const hoy  = format(new Date(), 'yyyy-MM-dd')
+  const en7  = format(addDays(new Date(), 7), 'yyyy-MM-dd')
+  const now  = new Date()
 
-  // Próxima reunión
-  const { data: proximaReunion } = await supabase
-    .from('crm_reuniones')
-    .select('*')
-    .eq('archivado', false)
-    .gte('fecha', hoy)
-    .order('fecha', { ascending: true })
-    .limit(1)
-    .single()
+  // ─── Fetch everything in parallel ─────────────────────────────
+  const [
+    { data: perfilesRaw },
+    { data: reunionRaw },
+    { data: entrevistasRaw },
+    { data: compromisosRaw },
+    { data: unidadesRaw },
+  ] = await Promise.all([
+    supabase
+      .from('crm_perfiles')
+      .select('id, nombre, rol')
+      .order('rol'),
+    supabase
+      .from('crm_reuniones')
+      .select('*')
+      .eq('archivado', false)
+      .gte('fecha', hoy)
+      .order('fecha', { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from('crm_entrevistas')
+      .select('id, nombre_miembro, tipo, estado, fecha_agendada, asignado_a, unidad_id, updated_at')
+      .eq('archivado', false),
+    supabase
+      .from('crm_compromisos')
+      .select('id, titulo, estado, prioridad, fecha_limite, asignado_a, updated_at')
+      .eq('archivado', false),
+    supabase
+      .from('crm_unidades')
+      .select('id, nombre')
+      .order('nombre'),
+  ])
 
-  // Mis compromisos pendientes
-  const { data: misCompromisos } = await supabase
-    .from('crm_compromisos')
-    .select('*')
-    .eq('asignado_a', user!.id)
-    .in('estado', ['pendiente', 'en_progreso'])
-    .eq('archivado', false)
-    .order('fecha_limite', { ascending: true, nullsFirst: false })
-    .limit(5)
+  type EntRow = Pick<Entrevista, 'id' | 'nombre_miembro' | 'tipo' | 'estado' | 'fecha_agendada' | 'asignado_a' | 'unidad_id' | 'updated_at'>
+  type CompRow = Pick<Compromiso, 'id' | 'titulo' | 'estado' | 'prioridad' | 'fecha_limite' | 'asignado_a' | 'updated_at'>
+  type ProfRow = Pick<Perfil, 'id' | 'nombre' | 'rol'>
+
+  const ents  = (entrevistasRaw  ?? []) as EntRow[]
+  const comps = (compromisosRaw  ?? []) as CompRow[]
+  const profs = (perfilesRaw     ?? []) as ProfRow[]
+  const unis  = (unidadesRaw     ?? []) as Array<{ id: string; nombre: string }>
+
+  // ─── KPIs ─────────────────────────────────────────────────────
+  const entTotal      = ents.length
+  const entRealizadas = ents.filter(e => e.estado === 'realizada').length
+  const entAgendadas  = ents.filter(e => e.estado === 'agendada').length
+  const entPendientes = ents.filter(e => e.estado === 'pendiente').length
+  const coberturaEnt  = entTotal > 0 ? Math.round((entRealizadas / entTotal) * 100) : 0
+
+  const compActivos  = comps.filter(c => ['pendiente', 'en_progreso'].includes(c.estado)).length
+  const compHechos   = comps.filter(c => c.estado === 'completado').length
+  const compVencidos = comps.filter(c =>
+    ['pendiente', 'en_progreso'].includes(c.estado) &&
+    c.fecha_limite !== null &&
+    c.fecha_limite < hoy
+  ).length
+  const tasaCumpl = (compActivos + compHechos) > 0
+    ? Math.round((compHechos / (compActivos + compHechos)) * 100)
+    : 0
+
+  // Sparklines: count realizadas/completados per day over last 7 days
+  const sparkEnt = Array.from({ length: 7 }, (_, i) => {
+    const d = format(addDays(now, -(6 - i)), 'yyyy-MM-dd')
+    return ents.filter(e => e.estado === 'realizada' && e.updated_at.startsWith(d)).length
+  })
+  const sparkComp = Array.from({ length: 7 }, (_, i) => {
+    const d = format(addDays(now, -(6 - i)), 'yyyy-MM-dd')
+    return comps.filter(c => c.estado === 'completado' && c.updated_at.startsWith(d)).length
+  })
+
+  // ─── Lookup maps ─────────────────────────────────────────────
+  const profMap = new Map(profs.map(p => [p.id, p]))
+  const uniMap  = new Map(unis.map(u => [u.id, u.nombre]))
+
+  const tono = (asignadoA: string | null): string => {
+    if (!asignadoA) return '#9C9A91'
+    const idx = profs.findIndex(p => p.id === asignadoA)
+    return idx >= 0 ? (TONE_PALETTE[idx % TONE_PALETTE.length] ?? '#9C9A91') : '#9C9A91'
+  }
+
+  // ─── Foco de la semana (next 7 days) ─────────────────────────
+  const focoItems = [
+    ...ents
+      .filter(e => e.estado === 'agendada' && e.fecha_agendada !== null)
+      .flatMap(e => {
+        const fecha = e.fecha_agendada!.substring(0, 10)
+        if (fecha < hoy || fecha > en7) return []
+        const hora = e.fecha_agendada!.length > 10 ? e.fecha_agendada!.substring(11, 16) : null
+        return [{
+          kind: 'entrevista' as const,
+          id: e.id,
+          titulo: e.nombre_miembro,
+          sub: TIPO_ENTREVISTA_LABELS[e.tipo],
+          fecha,
+          hora: hora && hora !== '00:00' ? hora : null,
+          href: `/entrevistas/${e.id}`,
+          prioridad: null,
+          perfil: e.asignado_a && profMap.has(e.asignado_a)
+            ? { nombre: profMap.get(e.asignado_a)!.nombre }
+            : null,
+        }]
+      }),
+    ...comps
+      .filter(c => c.fecha_limite && c.fecha_limite >= hoy && c.fecha_limite <= en7 &&
+        ['pendiente', 'en_progreso'].includes(c.estado))
+      .map(c => ({
+        kind: 'compromiso' as const,
+        id: c.id,
+        titulo: c.titulo,
+        sub: c.estado === 'en_progreso' ? 'En progreso' : 'Pendiente',
+        fecha: c.fecha_limite!,
+        hora: null,
+        href: '/compromisos',
+        prioridad: c.prioridad,
+        perfil: c.asignado_a && profMap.has(c.asignado_a)
+          ? { nombre: profMap.get(c.asignado_a)!.nombre }
+          : null,
+      })),
+  ].sort((a, b) => a.fecha.localeCompare(b.fecha))
+
+  // ─── Carga por dirigente ──────────────────────────────────────
+  const cargaItems = profs
+    .filter(p => p.rol !== 'secretario')
+    .map(p => ({
+      perfil: p,
+      entActivas:  ents.filter(e => e.asignado_a === p.id && ['agendada', 'pendiente'].includes(e.estado)).length,
+      compActivos: comps.filter(c => c.asignado_a === p.id && ['pendiente', 'en_progreso'].includes(c.estado)).length,
+      hechos:      ents.filter(e => e.asignado_a === p.id && e.estado === 'realizada').length,
+    }))
+    .sort((a, b) => (b.entActivas + b.compActivos) - (a.entActivas + a.compActivos))
+    .slice(0, 4)
+
+  // ─── Entrevistas por unidad ───────────────────────────────────
+  const uniGroup: Record<string, { realizadas: number; pendientes: number }> = {}
+  for (const e of ents) {
+    if (!e.unidad_id) continue
+    if (!uniGroup[e.unidad_id]) uniGroup[e.unidad_id] = { realizadas: 0, pendientes: 0 }
+    if (e.estado === 'realizada') uniGroup[e.unidad_id].realizadas++
+    else if (['pendiente', 'agendada'].includes(e.estado)) uniGroup[e.unidad_id].pendientes++
+  }
+  const unidadRows = Object.entries(uniGroup)
+    .map(([id, g]) => ({
+      id,
+      nombre: uniMap.get(id) ?? id,
+      realizadas: g.realizadas,
+      pendientes: g.pendientes,
+      total: g.realizadas + g.pendientes,
+    }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 8)
+
+  // ─── Actividad reciente ───────────────────────────────────────
+  const actividadItems = [
+    ...ents
+      .filter(e => e.updated_at)
+      .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+      .slice(0, 8)
+      .map(e => ({
+        id: 'ent-' + e.id,
+        ts: e.updated_at,
+        actorNombre: profMap.get(e.asignado_a ?? '')?.nombre ?? 'Sistema',
+        verbo: e.estado === 'realizada' ? 'realizó entrevista a' : 'actualizó entrevista de',
+        objeto: e.nombre_miembro,
+        tono: tono(e.asignado_a),
+      })),
+    ...comps
+      .filter(c => c.updated_at)
+      .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+      .slice(0, 8)
+      .map(c => ({
+        id: 'comp-' + c.id,
+        ts: c.updated_at,
+        actorNombre: profMap.get(c.asignado_a ?? '')?.nombre ?? 'Sistema',
+        verbo: c.estado === 'completado' ? 'completó' : 'actualizó compromiso',
+        objeto: c.titulo,
+        tono: tono(c.asignado_a),
+      })),
+  ]
+    .sort((a, b) => b.ts.localeCompare(a.ts))
+    .slice(0, 10)
+
+  // ─── Saludo personalizado ─────────────────────────────────────
+  const miPerfil  = profs.find(p => p.id === user!.id)
+  const apellido  = miPerfil?.nombre.split(' ').pop() ?? ''
+  const rolLabel  = miPerfil?.rol === 'presidente' ? 'Presidente' : 'Consejero'
+  const saludo    = miPerfil ? `${greeting()}, ${rolLabel} ${apellido}` : greeting()
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <Link
-          href="/agendas/nueva"
-          className={cn(buttonVariants({ variant: 'default' }), 'bg-[#1B2A5E] hover:bg-[#243578] text-white')}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Nueva agenda
-        </Link>
+    <div style={{ padding: '28px 32px', maxWidth: 1200, margin: '0 auto' }}>
+
+      {/* ── Page header ─────────────────────────────────────── */}
+      <div style={{ marginBottom: 28 }}>
+        <div style={{
+          fontSize: 10.5, letterSpacing: '0.14em',
+          textTransform: 'uppercase', color: '#9C9A91', fontWeight: 600,
+        }}>
+          Panel de control
+        </div>
+        <h1 style={{
+          fontSize: 22, fontWeight: 700, color: '#0E1018',
+          letterSpacing: '-0.025em', margin: '4px 0 0', lineHeight: 1.2,
+        }}>
+          {saludo}
+        </h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Próxima reunión */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base font-semibold text-gray-700">
-              <CalendarDays className="h-4 w-4 text-[#C9A84C]" />
-              Próxima reunión
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {proximaReunion ? (
-              <div className="space-y-3">
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    {(proximaReunion as Reunion).titulo}
-                  </p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {format(
-                      new Date((proximaReunion as Reunion).fecha + 'T00:00:00'),
-                      "EEEE d 'de' MMMM 'de' yyyy",
-                      { locale: es }
-                    )}
-                    {(proximaReunion as Reunion).hora_inicio && (
-                      <span> · {(proximaReunion as Reunion).hora_inicio}</span>
-                    )}
-                  </p>
-                </div>
-                <Link
-                  href={`/agendas/${(proximaReunion as Reunion).id}`}
-                  className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'w-full justify-center')}
-                >
-                  Abrir agenda
-                </Link>
-              </div>
-            ) : (
-              <div className="text-center py-6 text-gray-400">
-                <CalendarDays className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                <p className="text-sm">No hay reuniones programadas</p>
-                <Link
-                  href="/agendas/nueva"
-                  className={cn(buttonVariants({ variant: 'link', size: 'sm' }), 'mt-2 text-[#1B2A5E]')}
-                >
-                  Crear una ahora
-                </Link>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {/* ── KPI row ─────────────────────────────────────────── */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 16,
+        marginBottom: 24,
+      }}>
+        <KpiCard
+          kicker="Entrevistas"
+          value={entRealizadas}
+          suffix={`/ ${entTotal}`}
+          sub={`${entAgendadas} agendadas · ${entPendientes} pendientes`}
+          sparkline={sparkEnt}
+          tone="navy"
+        />
+        <KpiCard
+          kicker="Compromisos activos"
+          value={compActivos}
+          sub={`${compVencidos} vencidos · ${compHechos} completados`}
+          sparkline={sparkComp}
+          tone={compVencidos > 0 ? 'red' : 'gold'}
+        />
+        <KpiCard
+          kicker="Cobertura entrevistas"
+          value={coberturaEnt}
+          suffix="%"
+          sub={`${entRealizadas} de ${entTotal} entrevistas realizadas`}
+          tone="green"
+          accent={<Donut value={coberturaEnt} size={52} stroke={7} color="#1E6B3A" />}
+        />
+        <KpiCard
+          kicker="Tasa cumplimiento"
+          value={tasaCumpl}
+          suffix="%"
+          sub={`${compHechos} completados de ${compActivos + compHechos}`}
+          tone="gold"
+          accent={<Donut value={tasaCumpl} size={52} stroke={7} color="#C9A84C" />}
+        />
+      </div>
 
-        {/* Mis compromisos */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-base font-semibold text-gray-700">
-              <span className="flex items-center gap-2">
-                <CheckSquare className="h-4 w-4 text-[#C9A84C]" />
-                Mis compromisos
-              </span>
-              <Link
-                href="/compromisos"
-                className={cn(buttonVariants({ variant: 'link', size: 'sm' }), 'text-[#1B2A5E] h-auto p-0 text-xs')}
-              >
-                Ver todos
-              </Link>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {misCompromisos && misCompromisos.length > 0 ? (
-              <ul className="space-y-2">
-                {misCompromisos.map((c) => {
-                  const comp = c as Compromiso
-                  const vencido =
-                    comp.fecha_limite &&
-                    comp.fecha_limite < hoy &&
-                    comp.estado !== 'completado'
-                  return (
-                    <li
-                      key={comp.id}
-                      className="flex items-start justify-between gap-2 py-2 border-b border-gray-100 last:border-0"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {comp.titulo}
-                        </p>
-                        {comp.fecha_limite && (
-                          <p className={`text-xs mt-0.5 ${vencido ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
-                            {vencido ? 'Vencido · ' : ''}
-                            {format(new Date(comp.fecha_limite + 'T00:00:00'), 'd MMM', { locale: es })}
-                          </p>
-                        )}
-                      </div>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap ${estadoBadgeColor[comp.estado]}`}>
-                        {comp.estado.replace('_', ' ')}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ul>
-            ) : (
-              <div className="text-center py-6 text-gray-400">
-                <CheckSquare className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                <p className="text-sm">Sin compromisos pendientes</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {/* ── Main two-column layout ───────────────────────────── */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 340px',
+        gap: 20,
+        alignItems: 'start',
+      }}>
+        {/* Left column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <FocoSemana items={focoItems} today={hoy} />
+          {unidadRows.length > 0 && <UnidadesCard rows={unidadRows} />}
+          <ActividadCard items={actividadItems} />
+        </div>
+
+        {/* Right column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <ProximaReunionCard reunion={reunionRaw as Reunion | null} />
+          {cargaItems.length > 0 && <CargaCard items={cargaItems} />}
+        </div>
       </div>
     </div>
   )

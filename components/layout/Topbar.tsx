@@ -1,8 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,25 +11,39 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, ChevronDown, User } from 'lucide-react'
+import { LogOut, Bell, User, ChevronDown } from 'lucide-react'
 import { ROL_LABELS } from '@/lib/types'
 import type { Perfil } from '@/lib/types'
+
+const PAGE_TITLES: { prefix: string; exactMatch: boolean; kicker: string; title: string }[] = [
+  { prefix: '/dashboard',   exactMatch: true,  kicker: 'Inicio',         title: 'Dashboard' },
+  { prefix: '/agendas',     exactMatch: false, kicker: 'Reuniones',      title: 'Agendas' },
+  { prefix: '/kanban',      exactMatch: false, kicker: 'Seguimiento',    title: 'Tablero Kanban' },
+  { prefix: '/calendario',  exactMatch: false, kicker: 'Planificación',  title: 'Calendario' },
+  { prefix: '/compromisos', exactMatch: false, kicker: 'Seguimiento',    title: 'Compromisos' },
+  { prefix: '/entrevistas', exactMatch: false, kicker: 'Pastoreo',       title: 'Entrevistas' },
+]
+
+function getPageInfo(pathname: string) {
+  for (const p of PAGE_TITLES) {
+    const match = p.exactMatch ? pathname === p.prefix : pathname.startsWith(p.prefix)
+    if (match) return { kicker: p.kicker, title: p.title }
+  }
+  return { kicker: 'CRM', title: 'Presidencia de Estaca' }
+}
+
+function getInitials(nombre: string): string {
+  return nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
+}
 
 interface TopbarProps {
   perfil: Perfil
 }
 
-function getInitials(nombre: string): string {
-  return nombre
-    .split(' ')
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-}
-
 export function Topbar({ perfil }: TopbarProps) {
-  const router = useRouter()
+  const router   = useRouter()
+  const pathname = usePathname()
+  const page     = getPageInfo(pathname)
 
   async function handleLogout() {
     const supabase = createClient()
@@ -40,51 +53,103 @@ export function Topbar({ perfil }: TopbarProps) {
   }
 
   return (
-    <header className="h-14 flex items-center justify-end px-6 bg-white border-b border-gray-200 flex-shrink-0">
-      <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-100 transition-colors focus:outline-none">
-          <Avatar className="h-7 w-7">
-            <AvatarImage src={perfil.avatar_url ?? undefined} alt={perfil.nombre} />
-            <AvatarFallback className="bg-[#1B2A5E] text-white text-xs font-medium">
+    <header style={{
+      height: 56,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 24px',
+      background: '#FAF8F2',
+      borderBottom: '1px solid #EAE6D7',
+      flexShrink: 0,
+    }}>
+      {/* Left: page kicker + title */}
+      <div>
+        <div style={{
+          fontSize: 9.5, letterSpacing: '0.13em', textTransform: 'uppercase',
+          color: '#9C9A91', fontWeight: 600, lineHeight: 1,
+        }}>
+          {page.kicker}
+        </div>
+        <div style={{
+          fontSize: 15, fontWeight: 700, color: '#0E1018',
+          letterSpacing: '-0.015em', lineHeight: 1.15, marginTop: 3,
+        }}>
+          {page.title}
+        </div>
+      </div>
+
+      {/* Right: bell + user pill */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {/* Bell */}
+        <button
+          onClick={() => {}}
+          style={{
+            width: 34, height: 34, borderRadius: 8,
+            border: '1px solid #EAE6D7', background: '#fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', color: '#9C9A91', flexShrink: 0,
+          }}
+        >
+          <Bell size={15} />
+        </button>
+
+        {/* User dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg focus:outline-none" style={{
+            padding: '4px 10px 4px 5px',
+            background: '#fff',
+            border: '1px solid #EAE6D7',
+          }}>
+            {/* Mini avatar */}
+            <div style={{
+              width: 26, height: 26, borderRadius: '50%',
+              background: '#1B2A5E',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 9, fontWeight: 700, color: '#fff',
+              flexShrink: 0,
+            }}>
               {getInitials(perfil.nombre)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="text-left hidden sm:block">
-            <p className="text-sm font-medium text-gray-900 leading-none">
-              {perfil.nombre}
-            </p>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {ROL_LABELS[perfil.rol]}
-            </p>
-          </div>
-          <ChevronDown className="h-3 w-3 text-gray-400 hidden sm:block" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuGroup>
-            <DropdownMenuLabel>
-              <div>
-                <p className="font-medium">{perfil.nombre}</p>
-                <p className="text-xs text-gray-500 font-normal">{ROL_LABELS[perfil.rol]}</p>
+            </div>
+            {/* Name + role */}
+            <div style={{ textAlign: 'left' }} className="hidden sm:block">
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: '#0E1018', lineHeight: 1.2 }}>
+                {perfil.nombre.split(' ').slice(0, 2).join(' ')}
               </div>
-            </DropdownMenuLabel>
+              <div style={{ fontSize: 10, color: '#9C9A91' }}>
+                {ROL_LABELS[perfil.rol]}
+              </div>
+            </div>
+            <ChevronDown size={11} className="hidden sm:block" style={{ color: '#9C9A91' }} />
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>
+                <div>
+                  <p className="font-medium">{perfil.nombre}</p>
+                  <p className="text-xs text-gray-500 font-normal">{ROL_LABELS[perfil.rol]}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => router.push('/perfil')}
+                className="cursor-pointer"
+              >
+                <User className="mr-2 h-4 w-4" />
+                Mi perfil
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => router.push('/perfil')}
-              className="cursor-pointer"
+              onClick={handleLogout}
+              className="text-red-600 cursor-pointer"
             >
-              <User className="mr-2 h-4 w-4" />
-              Mi perfil
+              <LogOut className="mr-2 h-4 w-4" />
+              Cerrar sesión
             </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handleLogout}
-            className="text-red-600 cursor-pointer"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Cerrar sesión
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   )
 }
