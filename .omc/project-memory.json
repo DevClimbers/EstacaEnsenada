@@ -146,6 +146,18 @@
       "type": "file"
     },
     {
+      "path": "components/kanban/KanbanCard.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1780001344665,
+      "type": "file"
+    },
+    {
+      "path": "components/kanban/KanbanCardView.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1780001362403,
+      "type": "file"
+    },
+    {
       "path": "app/layout.tsx",
       "accessCount": 2,
       "lastAccessed": 1779935680386,
@@ -209,18 +221,6 @@
       "path": "app/(protected)/kanban/page.tsx",
       "accessCount": 2,
       "lastAccessed": 1780000038175,
-      "type": "file"
-    },
-    {
-      "path": "components/kanban/KanbanCardView.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1780000095286,
-      "type": "file"
-    },
-    {
-      "path": "components/kanban/KanbanCard.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1780000101431,
       "type": "file"
     },
     {
