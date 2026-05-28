@@ -140,9 +140,33 @@
   },
   "hotPaths": [
     {
+      "path": "components/calendario/CalendarioView.tsx",
+      "accessCount": 17,
+      "lastAccessed": 1780004187733,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/Sidebar.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1780004448489,
+      "type": "file"
+    },
+    {
       "path": "components/agendas/AgendaEditor.tsx",
       "accessCount": 5,
       "lastAccessed": 1780000018491,
+      "type": "file"
+    },
+    {
+      "path": "components/calendario/NuevaReunionModal.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1780004154747,
+      "type": "file"
+    },
+    {
+      "path": "app/layout.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1780004429962,
       "type": "file"
     },
     {
@@ -158,15 +182,15 @@
       "type": "file"
     },
     {
-      "path": "app/layout.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1779935680386,
+      "path": "app/api/reuniones/route.ts",
+      "accessCount": 3,
+      "lastAccessed": 1780004130375,
       "type": "file"
     },
     {
-      "path": "components/layout/Sidebar.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1779935710755,
+      "path": "components/agendas/NuevaAgendaForm.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1780004135289,
       "type": "file"
     },
     {
@@ -236,6 +260,12 @@
       "type": "file"
     },
     {
+      "path": "app/globals.css",
+      "accessCount": 2,
+      "lastAccessed": 1780004435614,
+      "type": "file"
+    },
+    {
       "path": "lib/types.ts",
       "accessCount": 1,
       "lastAccessed": 1779935393969,
@@ -257,18 +287,6 @@
       "path": "app/(protected)/agendas/[id]/AgendaEditorShell.tsx",
       "accessCount": 1,
       "lastAccessed": 1779999358931,
-      "type": "file"
-    },
-    {
-      "path": "components/agendas/NuevaAgendaForm.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1779999359696,
-      "type": "file"
-    },
-    {
-      "path": "app/api/reuniones/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1779999373195,
       "type": "file"
     },
     {

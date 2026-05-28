@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   Dialog,
   DialogContent,
@@ -27,7 +26,6 @@ export function NuevaReunionModal({
   onClose,
   onCreated,
 }: NuevaReunionModalProps) {
-  const router = useRouter()
   const today = format(new Date(), 'yyyy-MM-dd')
 
   const [titulo, setTitulo] = useState('Reunión de Presidencia')
@@ -57,6 +55,7 @@ export function NuevaReunionModal({
           fecha,
           hora_inicio: horaInicio || null,
           hora_fin: horaFin || null,
+          crear_agenda: false,
         }),
       })
 
@@ -67,14 +66,11 @@ export function NuevaReunionModal({
         return
       }
 
-      const reunion = await res.json()
       toast.success('Reunión creada')
       onCreated?.()
       onClose()
       reset()
       setLoading(false)
-      router.push(`/agendas/${reunion.id}`)
-      router.refresh()
     } catch {
       toast.error('Error de red al crear la reunión')
       setLoading(false)

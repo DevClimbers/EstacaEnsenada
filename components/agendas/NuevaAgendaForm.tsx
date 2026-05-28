@@ -33,6 +33,7 @@ export function NuevaAgendaForm({ defaultFecha }: { defaultFecha?: string }) {
           fecha,
           hora_inicio: horaInicio || null,
           hora_fin: horaFin || null,
+          crear_agenda: true,
         }),
       })
 

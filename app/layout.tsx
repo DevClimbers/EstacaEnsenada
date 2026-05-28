@@ -1,12 +1,20 @@
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Bricolage_Grotesque, Plus_Jakarta_Sans } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: '--font-sans',
+const display = Bricolage_Grotesque({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-display',
+  display: 'swap',
+})
+
+const sans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-sans',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -20,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${jakarta.variable} h-full antialiased`}>
+    <html lang="es" className={`${display.variable} ${sans.variable} h-full antialiased`}>
       <body className="min-h-full bg-[#FAF8F2] font-sans">
         {children}
         <Toaster richColors position="top-right" />

@@ -10,13 +10,16 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
 
   const body = await request.json()
-  const { titulo, fecha, hora_inicio, hora_fin } = body
+  const { titulo, fecha, hora_inicio, hora_fin, crear_agenda = true } = body
 
   if (!titulo || !fecha) {
     return NextResponse.json({ error: 'Título y fecha son requeridos' }, { status: 400 })
   }
 
-  const contenido = getPlantillaAgenda(new Date(fecha + 'T00:00:00'))
+  // Solo generar plantilla de agenda cuando se pide explícitamente
+  const contenido = crear_agenda
+    ? getPlantillaAgenda(new Date(fecha + 'T00:00:00'))
+    : null
 
   const { data, error } = await supabase
     .from('crm_reuniones')
@@ -25,8 +28,7 @@ export async function POST(request: Request) {
       fecha,
       hora_inicio: hora_inicio || null,
       hora_fin: hora_fin || null,
-      contenido,
-      blocknote_version: BLOCKNOTE_VERSION,
+      ...(contenido !== null && { contenido, blocknote_version: BLOCKNOTE_VERSION }),
       created_by: user.id,
     })
     .select()

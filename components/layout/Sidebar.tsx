@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Logo } from '@/components/brand/Logo'
 import {
   LayoutDashboard,
   CalendarDays,
@@ -91,30 +92,10 @@ export function Sidebar({ badges = {}, perfiles = [] }: SidebarProps) {
     }}>
       {/* Brand */}
       <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: '20px 18px 18px',
+        padding: '22px 18px 20px',
         borderBottom: '1px solid #EAE6D7',
       }}>
-        <div style={{
-          width: 32, height: 32, borderRadius: 8,
-          background: '#1B2A5E',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0,
-        }}>
-          <span style={{ fontSize: 11, fontWeight: 800, color: '#C9A84C', letterSpacing: '0.02em' }}>
-            PE
-          </span>
-        </div>
-        <div style={{ lineHeight: 1.3 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#0E1018', letterSpacing: '-0.01em' }}>
-            Presidencia
-          </div>
-          <div style={{ fontSize: 10.5, color: '#9C9A91', fontWeight: 500 }}>
-            Estaca Ensenada
-          </div>
-        </div>
+        <Logo variant="full" size="md" />
       </div>
 
       {/* Nav */}
