@@ -170,6 +170,12 @@
       "type": "file"
     },
     {
+      "path": "lib/blocknote/template.ts",
+      "accessCount": 2,
+      "lastAccessed": 1779999434548,
+      "type": "file"
+    },
+    {
       "path": "lib/types.ts",
       "accessCount": 1,
       "lastAccessed": 1779935393969,
@@ -185,6 +191,30 @@
       "path": "components/dashboard/Donut.tsx",
       "accessCount": 1,
       "lastAccessed": 1779935440130,
+      "type": "file"
+    },
+    {
+      "path": "app/(protected)/agendas/[id]/AgendaEditorShell.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779999358931,
+      "type": "file"
+    },
+    {
+      "path": "components/agendas/AgendaEditor.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779999359402,
+      "type": "file"
+    },
+    {
+      "path": "components/agendas/NuevaAgendaForm.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1779999359696,
+      "type": "file"
+    },
+    {
+      "path": "app/api/reuniones/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1779999373195,
       "type": "file"
     }
   ],
