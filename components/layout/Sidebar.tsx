@@ -10,6 +10,7 @@ import {
   CheckSquare,
   Users,
   Settings,
+  ExternalLink,
 } from 'lucide-react'
 import type { Perfil } from '@/lib/types'
 
@@ -172,6 +173,43 @@ export function Sidebar({ badges = {}, perfiles = [] }: SidebarProps) {
             )
           })}
         </div>
+
+        {/* Conferencia section */}
+        <div style={{
+          fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em',
+          textTransform: 'uppercase', color: '#B0ADA4',
+          padding: '16px 10px 8px',
+        }}>
+          Evento
+        </div>
+
+        <a
+          href="https://conferencia-estaca.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 9,
+            padding: '7px 10px',
+            borderRadius: 8,
+            textDecoration: 'none',
+            fontSize: 13.5,
+            fontWeight: 400,
+            color: '#3D3D38',
+            background: 'transparent',
+          }}
+        >
+          <ExternalLink size={15} style={{ flexShrink: 0, opacity: 0.55 }} />
+          <span style={{ flex: 1 }}>Conferencia</span>
+          <span style={{
+            fontSize: 9.5, fontWeight: 700,
+            background: '#C9A84C', color: '#fff',
+            borderRadius: 4, padding: '1px 5px',
+          }}>
+            24 may
+          </span>
+        </a>
 
         {/* Sistema section */}
         <div style={{
