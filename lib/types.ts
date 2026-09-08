@@ -33,7 +33,8 @@ export interface Reunion {
   hora_inicio: string | null
   hora_fin: string | null
   estado: EstadoReunion
-  contenido: unknown | null  // BlockNote PartialBlock[] JSON
+  contenido: unknown | null  // BlockNote PartialBlock[] JSON (copia de lectura)
+  contenido_yjs: string | null  // Estado Yjs del documento colaborativo (base64)
   blocknote_version: string | null
   archivado: boolean
   created_by: string | null

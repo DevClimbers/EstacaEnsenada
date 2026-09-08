@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 import { Plus, CheckSquare } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -25,20 +26,22 @@ const estadoOpciones: { value: EstadoCompromiso; label: string }[] = [
 interface CompromisoPanelProps {
   reunionId: string
   compromisos: Compromiso[]
+  setCompromisos: Dispatch<SetStateAction<Compromiso[]>>
   perfiles: Perfil[]
 }
 
 export function CompromisosPanel({
   reunionId,
-  compromisos: inicial,
+  compromisos,
+  setCompromisos,
   perfiles,
 }: CompromisoPanelProps) {
-  const [compromisos, setCompromisos] = useState<Compromiso[]>(inicial)
   const [modalOpen, setModalOpen] = useState(false)
   const hoy = new Date().toISOString().split('T')[0]
 
   function handleCreated(nuevo: Compromiso) {
-    setCompromisos((prev) => [...prev, nuevo])
+    // Realtime puede haberlo agregado ya: no duplicar
+    setCompromisos((prev) => (prev.some((c) => c.id === nuevo.id) ? prev : [...prev, nuevo]))
   }
 
   async function handleEstadoChange(id: string, estado: EstadoCompromiso) {

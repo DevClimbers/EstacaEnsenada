@@ -2,26 +2,42 @@
 
 import '@blocknote/mantine/style.css'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useCreateBlockNote } from '@blocknote/react'
 import { BlockNoteView } from '@blocknote/mantine'
-import type { PartialBlock } from '@blocknote/core'
-import { Plus, Save, AlertTriangle, Trash2, ArrowLeft } from 'lucide-react'
+import * as Y from 'yjs'
+import { Awareness } from 'y-protocols/awareness'
+import { Plus, Save, Trash2, ArrowLeft, Wifi, WifiOff } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { CompromisosPanel } from './CompromisosPanel'
 import { CompromisoModal } from '@/components/compromisos/CompromisoModal'
 import { BLOCKNOTE_VERSION } from '@/lib/blocknote/template'
 import { crearUploadFile } from '@/lib/blocknote/upload'
+import { createClient } from '@/lib/supabase/client'
+import { SupabaseYjsProvider } from '@/lib/yjs/supabase-provider'
+import { fromBase64, toBase64 } from '@/lib/yjs/codec'
+import { colorDeUsuario } from '@/lib/yjs/colores'
+import { useCompromisosEnVivo } from '@/lib/yjs/useCompromisosEnVivo'
 import { ESTADO_REUNION_LABELS } from '@/lib/types'
 import type { Reunion, Compromiso, Perfil, EstadoReunion } from '@/lib/types'
+
+/** Debe coincidir con FRAGMENTO_AGENDA en lib/yjs/server.ts */
+const FRAGMENTO_AGENDA = 'agenda'
 
 interface AgendaEditorProps {
   reunion: Reunion
   compromisos: Compromiso[]
   perfiles: Perfil[]
+  usuario: { id: string; nombre: string }
+}
+
+interface Colaborador {
+  clientId: number
+  name: string
+  color: string
 }
 
 const estadoColor: Record<EstadoReunion, string> = {
@@ -30,15 +46,16 @@ const estadoColor: Record<EstadoReunion, string> = {
   finalizada: 'bg-green-100 text-green-700',
 }
 
-export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorProps) {
+export function AgendaEditor({ reunion, compromisos, perfiles, usuario }: AgendaEditorProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<Date | null>(null)
-  const [conflict, setConflict] = useState<{ updated_at_db: string } | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
-  const [localCompromisos, setLocalCompromisos] = useState<Compromiso[]>(compromisos)
+  const [localCompromisos, setLocalCompromisos] = useCompromisosEnVivo(reunion.id, compromisos)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [conectado, setConectado] = useState(false)
+  const [colaboradores, setColaboradores] = useState<Colaborador[]>([])
 
   async function handleDeleteAgenda() {
     if (!confirmDelete) { setConfirmDelete(true); return }
@@ -59,13 +76,24 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
     }
   }
 
-  const localUpdatedAt = useRef<string>(reunion.updated_at)
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const dirty = useRef(false)
+
+  // Documento colaborativo (Yjs). Se crea una sola vez con el estado guardado
+  // en la BD; a partir de ahí los cambios se sincronizan entre navegadores.
+  const [{ doc, awareness, fragment }] = useState(() => {
+    const doc = new Y.Doc()
+    if (reunion.contenido_yjs) Y.applyUpdate(doc, fromBase64(reunion.contenido_yjs), 'db')
+    return { doc, awareness: new Awareness(doc), fragment: doc.getXmlFragment(FRAGMENTO_AGENDA) }
+  })
 
   const editor = useCreateBlockNote({
-    initialContent: reunion.contenido
-      ? (reunion.contenido as PartialBlock[])
-      : undefined,
+    collaboration: {
+      fragment,
+      provider: { awareness },
+      user: { name: usuario.nombre, color: colorDeUsuario(usuario.id) },
+      showCursorLabels: 'activity',
+    },
     // Habilita la pestaña "Subir" en el bloque de imagen y el pegado/arrastre
     // de archivos. Sube a Supabase Storage y guarda la URL pública en la agenda.
     uploadFile: async (file: File) => {
@@ -78,50 +106,81 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
     },
   })
 
-  const save = useCallback(
-    async (force = false) => {
-      setSaving(true)
-      const content = editor.document
+  const save = useCallback(async () => {
+    dirty.current = false
+    setSaving(true)
+    const res = await fetch(`/api/reuniones/${reunion.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        yjs: toBase64(Y.encodeStateAsUpdate(doc)),
+        blocknote_version: BLOCKNOTE_VERSION,
+      }),
+    })
+    setSaving(false)
 
-      const res = await fetch(`/api/reuniones/${reunion.id}`, {
+    if (!res.ok) {
+      dirty.current = true
+      toast.error('Error al guardar')
+      return
+    }
+    setSavedAt(new Date())
+  }, [doc, reunion.id])
+
+  // Conexión en vivo + autosave. El provider se crea en un efecto (y se
+  // destruye al desmontar) para no dejar canales abiertos.
+  useEffect(() => {
+    const supabase = createClient()
+    const provider = new SupabaseYjsProvider(supabase, reunion.id, doc, awareness)
+    const offEstado = provider.onEstado((e) => setConectado(e === 'conectado'))
+
+    // Autosave: 2 s después del último cambio LOCAL (los cambios remotos los
+    // guarda quien los hizo; el servidor fusiona todo de todas formas).
+    const onUpdate = (_u: Uint8Array, origin: unknown) => {
+      if (origin === provider || origin === 'db') return
+      dirty.current = true
+      clearTimeout(saveTimeout.current)
+      saveTimeout.current = setTimeout(() => void save(), 2000)
+    }
+    doc.on('update', onUpdate)
+
+    // Quiénes están en la agenda ahora mismo
+    const onAwareness = () => {
+      const otros: Colaborador[] = []
+      awareness.getStates().forEach((state, clientId) => {
+        if (clientId === doc.clientID || !state?.user) return
+        otros.push({ clientId, name: state.user.name, color: state.user.color })
+      })
+      setColaboradores(otros)
+    }
+    awareness.on('change', onAwareness)
+
+    // Si cierran la pestaña con cambios sin guardar, mandar un último guardado
+    const onPageHide = () => {
+      if (!dirty.current) return
+      clearTimeout(saveTimeout.current)
+      void fetch(`/api/reuniones/${reunion.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        keepalive: true,
         body: JSON.stringify({
-          contenido: content,
+          yjs: toBase64(Y.encodeStateAsUpdate(doc)),
           blocknote_version: BLOCKNOTE_VERSION,
-          updated_at_client: force ? null : localUpdatedAt.current,
         }),
       })
+    }
+    window.addEventListener('pagehide', onPageHide)
 
-      setSaving(false)
-
-      if (res.status === 409) {
-        const data = await res.json()
-        setConflict(data)
-        return
-      }
-
-      if (!res.ok) {
-        toast.error('Error al guardar')
-        return
-      }
-
-      const updated = await res.json()
-      localUpdatedAt.current = updated.updated_at
-      setSavedAt(new Date())
-      if (force) {
-        setConflict(null)
-        toast.success('Sobrescrito y guardado')
-      }
-    },
-    [editor, reunion.id]
-  )
-
-  // Autosave: debounce 2s tras cada cambio
-  function handleChange() {
-    clearTimeout(saveTimeout.current)
-    saveTimeout.current = setTimeout(() => save(), 2000)
-  }
+    return () => {
+      window.removeEventListener('pagehide', onPageHide)
+      awareness.off('change', onAwareness)
+      doc.off('update', onUpdate)
+      offEstado()
+      clearTimeout(saveTimeout.current)
+      onPageHide()
+      provider.destroy()
+    }
+  }, [doc, awareness, reunion.id, save])
 
   async function handleEstadoChange(estado: EstadoReunion) {
     const res = await fetch(`/api/reuniones/${reunion.id}`, {
@@ -169,6 +228,33 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Presencia: quién más está en la agenda */}
+            {colaboradores.length > 0 && (
+              <div className="flex items-center -space-x-1.5 mr-1" title={colaboradores.map((c) => c.name).join(', ')}>
+                {colaboradores.slice(0, 4).map((c) => (
+                  <span
+                    key={c.clientId}
+                    className="h-6 w-6 rounded-full ring-2 ring-white text-[10px] font-semibold text-white flex items-center justify-center"
+                    style={{ backgroundColor: c.color }}
+                  >
+                    {c.name.trim().charAt(0).toUpperCase() || '?'}
+                  </span>
+                ))}
+                {colaboradores.length > 4 && (
+                  <span className="text-xs text-gray-500 pl-2">+{colaboradores.length - 4}</span>
+                )}
+              </div>
+            )}
+            <span
+              className={cn(
+                'flex items-center gap-1 text-xs',
+                conectado ? 'text-green-600' : 'text-gray-400'
+              )}
+              title={conectado ? 'Sincronización en vivo activa' : 'Sin conexión en vivo: los cambios se guardan y se fusionan al reconectar'}
+            >
+              {conectado ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
+              <span className="hidden md:inline">{conectado ? 'En vivo' : 'Sin conexión'}</span>
+            </span>
             {savedAt && !saving && (
               <span className="text-xs text-gray-400">
                 Guardado {savedAt.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
@@ -218,31 +304,10 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
           </div>
         </div>
 
-        {/* Aviso de conflicto */}
-        {conflict && (
-          <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 border-b border-amber-200 text-sm text-amber-800">
-            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-            <span>Otro usuario guardó cambios mientras editabas.</span>
-            <button
-              onClick={() => save(true)}
-              className="ml-auto text-sm font-medium text-amber-900 underline underline-offset-2"
-            >
-              Sobrescribir con mis cambios
-            </button>
-            <button
-              onClick={() => { setConflict(null); window.location.reload() }}
-              className="text-sm font-medium text-amber-900 underline underline-offset-2"
-            >
-              Descartar mis cambios
-            </button>
-          </div>
-        )}
-
         {/* Editor */}
         <div className="flex-1 overflow-y-auto">
           <BlockNoteView
             editor={editor}
-            onChange={handleChange}
             theme="light"
             className="min-h-full px-2"
           />
@@ -253,6 +318,7 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
       <CompromisosPanel
         reunionId={reunion.id}
         compromisos={localCompromisos}
+        setCompromisos={setLocalCompromisos}
         perfiles={perfiles}
       />
 
@@ -262,7 +328,9 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
         onClose={() => setModalOpen(false)}
         reunionId={reunion.id}
         perfiles={perfiles}
-        onCreated={(c) => setLocalCompromisos((prev) => [...prev, c])}
+        onCreated={(c) =>
+          setLocalCompromisos((prev) => (prev.some((x) => x.id === c.id) ? prev : [...prev, c]))
+        }
       />
     </div>
   )

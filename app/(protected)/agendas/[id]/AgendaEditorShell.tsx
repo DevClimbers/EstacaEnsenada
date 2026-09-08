@@ -13,14 +13,16 @@ interface Props {
   reunion: Reunion
   compromisos: Compromiso[]
   perfiles: Perfil[]
+  usuario: { id: string; nombre: string }
 }
 
-export function AgendaEditorShell({ reunion, compromisos, perfiles }: Props) {
+export function AgendaEditorShell({ reunion, compromisos, perfiles, usuario }: Props) {
   return (
     <AgendaEditor
       reunion={reunion}
       compromisos={compromisos}
       perfiles={perfiles}
+      usuario={usuario}
     />
   )
 }
