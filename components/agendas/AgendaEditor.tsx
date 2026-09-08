@@ -4,15 +4,17 @@ import '@blocknote/mantine/style.css'
 
 import { useCallback, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useCreateBlockNote } from '@blocknote/react'
 import { BlockNoteView } from '@blocknote/mantine'
 import type { PartialBlock } from '@blocknote/core'
-import { Plus, Save, AlertTriangle, Trash2 } from 'lucide-react'
+import { Plus, Save, AlertTriangle, Trash2, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { CompromisosPanel } from './CompromisosPanel'
 import { CompromisoModal } from '@/components/compromisos/CompromisoModal'
 import { BLOCKNOTE_VERSION } from '@/lib/blocknote/template'
+import { crearUploadFile } from '@/lib/blocknote/upload'
 import { ESTADO_REUNION_LABELS } from '@/lib/types'
 import type { Reunion, Compromiso, Perfil, EstadoReunion } from '@/lib/types'
 
@@ -64,6 +66,16 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
     initialContent: reunion.contenido
       ? (reunion.contenido as PartialBlock[])
       : undefined,
+    // Habilita la pestaña "Subir" en el bloque de imagen y el pegado/arrastre
+    // de archivos. Sube a Supabase Storage y guarda la URL pública en la agenda.
+    uploadFile: async (file: File) => {
+      try {
+        return await crearUploadFile(reunion.id)(file)
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'No se pudo subir la imagen')
+        throw err
+      }
+    },
   })
 
   const save = useCallback(
@@ -128,6 +140,14 @@ export function AgendaEditor({ reunion, compromisos, perfiles }: AgendaEditorPro
         {/* Barra de herramientas */}
         <div className="flex items-center justify-between px-6 py-3 border-b border-gray-200 bg-white flex-shrink-0">
           <div className="flex items-center gap-3">
+            <Link
+              href="/agendas"
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors flex-shrink-0"
+              title="Volver a agendas"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Atrás</span>
+            </Link>
             <h1 className="text-base font-semibold text-gray-900 truncate max-w-xs">
               {reunion.titulo}
             </h1>
