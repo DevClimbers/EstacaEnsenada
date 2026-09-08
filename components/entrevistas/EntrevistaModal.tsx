@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -46,6 +46,7 @@ export function EntrevistaModal({
   const [lugar, setLugar] = useState('')
   const [asignadoA, setAsignadoA] = useState('')
   const [loading, setLoading] = useState(false)
+  const submitting = useRef(false)
 
   function reset() {
     setNombreMiembro('')
@@ -59,6 +60,8 @@ export function EntrevistaModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!nombreMiembro.trim() || !tipo) return
+    if (submitting.current) return
+    submitting.current = true
     setLoading(true)
 
     const res = await fetch('/api/entrevistas', {
@@ -77,6 +80,7 @@ export function EntrevistaModal({
     if (!res.ok) {
       toast.error('Error al crear la entrevista')
       setLoading(false)
+      submitting.current = false
       return
     }
 
@@ -86,6 +90,7 @@ export function EntrevistaModal({
     reset()
     onClose()
     setLoading(false)
+    submitting.current = false
   }
 
   return (
